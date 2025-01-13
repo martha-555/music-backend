@@ -2,7 +2,9 @@
 
 const axios = require("axios");
 var express = require("express");
-const { getInfo } = require("ytdl-core");
+const { getInfo } = require("@distube/ytdl-core");
+
+// const { getInfo } = require("ytdl-core");
 
 var router = express.Router();
 
@@ -79,13 +81,22 @@ const getFirstVideoId = async (query) => {
   throw new Error("Video id not found");
 };
 
-const getVideoMp3 = async (id) => {
-  const response = await getInfo(`http://www.youtube.com/watch?v=${id}`);
-  const targetFormat = response.formats.filter(
-    (format) => format.itag === 140
-  )[0];
+// const getVideoMp3 = async (id) => {
+//   const response = await getInfo(`http://www.youtube.com/watch?v=${id}`);
+//   const targetFormat = response.formats.filter(
+//     (format) => format.itag === 140
+//   )[0];
 
-  return targetFormat.url;
+//   return targetFormat.url;
+// };
+
+const ytdl = require("@distube/ytdl-core");
+
+const getVideoMp3 = async (id) => {
+  const response = await ytdl.getInfo(`http://www.youtube.com/watch?v=${id}`);
+  const targetFormat = response.formats.find((format) => format.itag === 140);
+
+  return targetFormat ? targetFormat.url : null;
 };
 
 module.exports = router;
